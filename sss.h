@@ -52,6 +52,17 @@ inline uint8_t sss_get_SHARE_LEN(uint8_t clen)
 	return clen + sss_KEYSHARE_LEN;
 }
 
+static
+inline uint8_t sss_SLEN_TO_MLEN(uint8_t len)
+{
+  if (len <= sss_KEYSHARE_LEN)
+    return 0;
+
+  len -= sss_KEYSHARE_LEN;
+  if (len <= 16)
+    return 0;
+  return len - 16;
+}
 
 sss_Share* sss_new_shares(uint8_t share_len, uint8_t n);
 void sss_free_shares(sss_Share *share, uint8_t n);

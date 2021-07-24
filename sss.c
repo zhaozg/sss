@@ -39,13 +39,17 @@ static const unsigned char nonce[crypto_secretbox_NONCEBYTES] = { 0 };
 sss_Share* sss_new_shares(uint8_t share_len, uint8_t n)
 {
 	int i;
-	uint8_t len = sss_get_SHARE_LEN(sss_get_CLEN(share_len));
+	uint8_t len;
 
 	sss_Share *s = malloc(sizeof(sss_Share)*n);
 	if (s==NULL)
 		goto err;
 
 	memset(s, 0, sizeof(sss_Share)*n);
+	if (share_len==0)
+		return s;
+
+	len = sss_get_SHARE_LEN(sss_get_CLEN(share_len));
 	for(i=0; i<n; i++)
 	{
 		s[i].size = len;
