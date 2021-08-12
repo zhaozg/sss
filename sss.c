@@ -145,6 +145,7 @@ void sss_create_shares(sss_Share *out,
 	memcpy(&m[crypto_secretbox_ZEROBYTES], data, MLEN);
 	tmp = crypto_secretbox(c, m, mlen, nonce, key);
 	assert(tmp == 0); /* should always happen */
+	(void)tmp;
 
 	/* Generate KeyShares */
 	sss_create_keyshares(keyshares, key, n, k);
