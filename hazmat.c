@@ -18,7 +18,7 @@
  */
 
 
-#include "randombytes.h"
+#include "randombytes/randombytes.h"
 #include "hazmat.h"
 #include <assert.h>
 #include <string.h>
@@ -283,7 +283,9 @@ gf256_inv(uint32_t r[8], uint32_t x[8])
 	assert(k <= n);
 
 	uint8_t share_idx, coeff_idx, unbitsliced_x;
-	uint32_t poly0[8], poly[k-1][8], x[8], y[8], xpow[8], tmp[8];
+	uint32_t poly0[8], x[8], y[8], xpow[8], tmp[8];
+	/* uint32_t poly[k-1][8] */
+	uint32_t **poly = (uint32_t **)calloc(k - 1, sizeof(uint32_t[8]));
 
 	/* Put the secret in the bottom part of the polynomial */
 	bitslice(poly0, key);
@@ -309,6 +311,7 @@ gf256_inv(uint32_t r[8], uint32_t x[8])
 		}
 		unbitslice(&out[share_idx][1], y);
 	}
+	free(poly);
 }
 
 
@@ -321,9 +324,11 @@ gf256_inv(uint32_t r[8], uint32_t x[8])
                             uint8_t k)
 {
 	size_t share_idx, idx1, idx2;
-	uint32_t xs[k][8], ys[k][8];
 	uint32_t num[8], denom[8], tmp[8];
 	uint32_t secret[8] = {0};
+	/* uint32_t xs[k][8], ys[k][8]; */
+	uint32_t **xs = (uint32_t **)calloc(k, sizeof(uint32_t[8]));
+	uint32_t **ys = (uint32_t **)calloc(k, sizeof(uint32_t[8]));
 
 	/* Collect the x and y values */
 	for (share_idx = 0; share_idx < k; share_idx++) {
@@ -350,4 +355,6 @@ gf256_inv(uint32_t r[8], uint32_t x[8])
 		gf256_add(secret, num);
 	}
 	unbitslice(key, secret);
+	free(xs);
+	free(ys);
 }

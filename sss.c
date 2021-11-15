@@ -13,7 +13,7 @@
  */
 
 
-#include "randombytes.h"
+#include "randombytes/randombytes.h"
 #include "tweetnacl.h"
 #include "sss.h"
 #include "tweetnacl.h"
@@ -136,7 +136,7 @@ void sss_create_shares(sss_Share *out,
 	uint8_t *m = calloc(1, mlen);
 	uint8_t *c = calloc(1, mlen);
 
-	sss_Keyshare keyshares[n];
+	sss_Keyshare* keyshares = calloc(n, sizeof(sss_Keyshare));
 
 	/* Generate a random encryption key */
 	randombytes(key, sizeof(key));
@@ -159,6 +159,7 @@ void sss_create_shares(sss_Share *out,
 	}
 	free(m);
 	free(c);
+	free(keyshares);
 }
 
 
@@ -178,7 +179,7 @@ int sss_combine_shares(uint8_t *data, const sss_Share *shares, uint8_t k)
 	uint8_t *m;
 	uint8_t *c;
 
-	sss_Keyshare keyshares[k];
+	sss_Keyshare* keyshares = calloc(k, sizeof(k));
 	size_t idx;
 	int ret = 0;
 
@@ -210,6 +211,7 @@ int sss_combine_shares(uint8_t *data, const sss_Share *shares, uint8_t k)
 
 	free(m);
 	free(c);
+	free(keyshares);
 
 	return ret;
 }
